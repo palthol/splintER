@@ -22,6 +22,9 @@ app.use(cors({
 }));
 
 // Routes
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
 app.use('/api/auth', authRoutes);
 app.use('/api', summonerRoutes);
 
@@ -64,23 +67,33 @@ app.use(errorHandler);
 export default app;
 
 // Add a module check to start the server only if this file is executed directly
+
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;
+  let server: any;
   
   sequelize.authenticate()
     .then(() => {
       console.log('Database connection established');
       
-      // Optional: sync models with database (use with caution in production)
-      // return sequelize.sync();
-    })
-    .then(() => {
-      app.listen(PORT, () => {
+      server = app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
+      });
+      
+      // Handle graceful shutdown
+      process.on('SIGTERM', () => {
+        console.log('SIGTERM received, shutting down gracefully');
+        server.close(() => {
+          console.log('Server closed');
+          sequelize.close().then(() => {
+            console.log('Database connection closed');
+            process.exit(0);
+          });
+        });
       });
     })
     .catch(err => {
       console.error('Unable to connect to database:', err);
-      process.exit(1); // Exit with error code if DB connection fails
+      process.exit(1);
     });
 }

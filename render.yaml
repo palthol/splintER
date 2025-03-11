@@ -3,10 +3,10 @@ services:
   - type: web
     name: splinter-api
     env: node
-    region: oregon  # Add this line
-    plan: free      # Add this line
-    buildCommand: cd backend && npm install && npm run build
-    startCommand: cd backend && node dist/app.js
+    region: oregon
+    plan: free
+    buildCommand: npm run install:all && npm run build:backend
+    startCommand: cd backend && npm run start
     envVars:
       - key: NODE_ENV
         value: production
@@ -14,6 +14,10 @@ services:
         value: 10000
       - key: RIOT_API_KEY
         sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION
+        value: "24h"
       - key: DB_HOST
         sync: false
       - key: DB_USER
@@ -22,17 +26,14 @@ services:
         sync: false
       - key: DB_NAME
         sync: false
-      - key: JWT_SECRET
-        generateValue: true
-    healthCheckPath: /
 
-  # Frontend static site
+  # Frontend static site  
   - type: web
     name: splinter-frontend
     env: static
-    region: oregon  # Add this line
-    plan: free      # Add this line
-    buildCommand: cd frontend && npm install && npm run build
+    region: oregon
+    plan: free
+    buildCommand: npm run install:all && npm run build:frontend
     staticPublishPath: ./frontend/dist
     envVars:
       - key: VITE_API_URL

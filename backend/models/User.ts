@@ -1,8 +1,28 @@
-const { Model, DataTypes } = require('sequelize');
+import { Model, DataTypes, Sequelize, Optional } from 'sequelize';
 
-module.exports = (sequelize) => {
-  class User extends Model {
-    static associate(models) {
+interface UserAttributes {
+  id: number;
+  username: string;
+  email: string;
+  passwordHash: string;
+  riotId?: string;
+  usernameId: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+interface UserCreationAttributes extends Optional<UserAttributes, 'id'> {}
+
+export default (sequelize: Sequelize) => {
+  class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
+    id!: number;
+    username!: string;
+    email!: string;
+    passwordHash!: string;
+    riotId?: string;
+    usernameId!: string;
+    
+    static associate(models: any) {
       // Define associations here if needed
     }
   }
@@ -42,7 +62,7 @@ module.exports = (sequelize) => {
   }, {
     sequelize,
     modelName: 'User',
-    timestamps: true // This will add createdAt and updatedAt fields
+    timestamps: true 
   });
   
   return User;

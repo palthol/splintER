@@ -1,5 +1,7 @@
-const bcrypt = require('bcrypt');
-const { sequelize, User } = require('../models');
+import bcrypt from 'bcrypt';
+import db from '../models';
+
+const { sequelize, User } = db;
 
 async function seedDatabase() {
   try {
@@ -28,7 +30,7 @@ async function seedDatabase() {
     
     console.log('Database seeded successfully');
     process.exit(0);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error seeding database:', error);
     process.exit(1);
   }

@@ -1,12 +1,15 @@
 {
-  "dependencies": {
-    "axios": "^1.8.1",
-    "framer-motion": "^12.4.10",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "tailwindcss": "^4.0.9"
-  },
-  "devDependencies": {
-
-  }
+    "scripts": {
+          "backend": "cd backend && npm run dev",
+          "frontend": "cd frontend && npm run dev",
+          "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+          "build": "npm run build:backend && npm run build:frontend",
+          "build:backend": "cd backend && npm run build",
+          "build:frontend": "cd frontend && npm run build",
+          "start": "cd backend && npm run start",
+          "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
+     },
+         "devDependencies": {
+          "concurrently": "^9.1.2"
+     }
 }

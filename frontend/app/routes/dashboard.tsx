@@ -1,5 +1,3 @@
-import LandingPage from "~/components/Hero";
-import AnimatedWaveBackground from "~/components/AnimatedWaveBackground";
 import type { Route } from "./+types/home";
 import Navbar from "~/components/navbar";
 import Footer from "~/components/footer";

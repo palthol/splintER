@@ -4,6 +4,7 @@ export default
 [index("routes/home.tsx"),
  route("/profile", "routes/profile.tsx"),
  route("/dashboard", "routes/dashboard.tsx"),
+ route("/summoner", "routes/summoner.tsx")
 
 
 

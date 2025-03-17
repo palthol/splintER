@@ -10,7 +10,7 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Profile() {
+export default function Auth() {
   return (
     <div className="flex flex-col min-h-screen relative">
       <Navbar />

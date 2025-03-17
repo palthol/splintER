@@ -17,7 +17,7 @@ const LandingPage: React.FC = () => {
         </p>
         
         {/* Dynamic button based on authentication state */}
-        <Link to={isAuthenticated ? "/dashboard" : "/profile"}>
+        <Link to={isAuthenticated ? "/dashboard" : "/auth"}>
           <button className="bg-[#5865F2] text-white font-roboto text-base py-3 px-6 rounded hover:bg-[#4b55d6] transition-all duration-300">
             {isAuthenticated ? "Go to Dashboard" : "Create a Profile"}
           </button>

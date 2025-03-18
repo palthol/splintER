@@ -31,7 +31,6 @@ services:
   - type: web
     name: splinter-frontend
     env: static
-    region: oregon
     plan: free
     buildCommand: npm run install:all && npm run build:frontend
     staticPublishPath: ./frontend/dist

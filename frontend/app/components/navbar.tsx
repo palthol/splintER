@@ -19,15 +19,15 @@ const Navbar: React.FC = () => {
           <div className="flex items-center">
             {/* Desktop nav links */}
             <div className="hidden md:flex space-x-4 items-center">
-              <Link to="/dashboard" className="hover:text-gray-300">
+              {/* <Link to="/dashboard" className="hover:text-gray-300">
                 Dashboard
-              </Link>
+              </Link> */}
               <Link to="/summoner" className="hover:text-gray-300">
                 Summoner Search
               </Link>
-              <Link to="/profile" className="hover:text-gray-300">
+              {/* <Link to="/profile" className="hover:text-gray-300">
                 Profile
-              </Link>
+              </Link> */}
             </div>
             
             {/* Profile Icon - visible on all screen sizes */}

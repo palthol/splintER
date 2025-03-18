@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext"; // Add this import
 
 // API endpoint URLs - adjust as needed
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api/auth` : "http://localhost:5000/api/auth";
 
 interface FormData {
   username?: string;
@@ -26,6 +28,20 @@ const AuthForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
+  // Get auth context functions and state
+  const { loginWithCredentials, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  
+  console.log("[AuthForm] Initial render, isAuthenticated:", isAuthenticated);
+  
+  // Monitor authentication state changes
+  useEffect(() => {
+    console.log("[AuthForm] Auth state changed, isAuthenticated:", isAuthenticated);
+    if (isAuthenticated) {
+      console.log("[AuthForm] User is authenticated, should redirect soon");
+    }
+  }, [isAuthenticated]);
+  
   // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -35,33 +51,20 @@ const AuthForm: React.FC = () => {
   
   // Sign up API helper function
   const registerUser = async (userData: FormData) => {
+    console.log("[AuthForm] Attempting to register user:", userData.email);
     try {
       setIsLoading(true);
       const response = await axios.post(`${API_URL}/register`, userData);
+      console.log("[AuthForm] Registration successful:", response.data);
       setIsLoading(false);
       return response.data;
     } catch (err) {
+      console.error("[AuthForm] Registration error:", err);
       setIsLoading(false);
       if (axios.isAxiosError(err) && err.response) {
         throw new Error(err.response.data.msg || "Registration failed");
       }
       throw new Error("Network error during registration");
-    }
-  };
-  
-  // Sign in API helper function
-  const signInUser = async (userData: Pick<FormData, "email" | "password">) => {
-    try {
-      setIsLoading(true);
-      const response = await axios.post(`${API_URL}/login`, userData);
-      setIsLoading(false);
-      return response.data;
-    } catch (err) {
-      setIsLoading(false);
-      if (axios.isAxiosError(err) && err.response) {
-        throw new Error(err.response.data.msg || "Login failed");
-      }
-      throw new Error("Network error during login");
     }
   };
   
@@ -94,26 +97,33 @@ const AuthForm: React.FC = () => {
       
       // Call the appropriate API based on active tab
       if (activeTab === "signup") {
+        console.log("[AuthForm] Processing signup form");
         const result = await registerUser(formData);
-        console.log("Registration successful:", result);
+        console.log("[AuthForm] Registration successful, switching to signin");
         // After successful registration, switch to sign-in
         setActiveTab("signin");
       } else {
+        console.log("[AuthForm] Processing signin form");
         const { email, password } = formData;
-        const result = await signInUser({ email, password });
-        console.log("Login successful:", result);
-        // Store token in localStorage (or a better auth management solution)
-        localStorage.setItem("token", result.token);
-        // Redirect or update app state here
-        window.location.href = "/dashboard";
+        
+        // HERE IS THE KEY CHANGE: Use the context's login function
+        // instead of directly manipulating localStorage
+        const success = await loginWithCredentials(email, password);
+        console.log("[AuthForm] Login attempt result:", success);
+        
+        if (success) {
+          console.log("[AuthForm] Login successful, redirecting to /summoner");
+          navigate("/summoner"); 
+        }
       }
     } catch (err) {
       if (err instanceof Error) {
+        console.error("[AuthForm] Form submission error:", err.message);
         setError(err.message);
       } else {
+        console.error("[AuthForm] Unexpected error:", err);
         setError("An unexpected error occurred");
       }
-      console.error("Auth error:", err);
     }
   };
   

@@ -50,6 +50,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+
+  try {
+    console.log("App rendering, API URL:", import.meta.env.VITE_API_URL || 'not set');
+  } catch (e) {
+    console.error("Error during app initialization:", e);
+  }
   return(
   <AuthProvider>
   <Outlet />

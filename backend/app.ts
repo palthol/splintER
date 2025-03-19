@@ -66,34 +66,31 @@ app.use(errorHandler);
 // Export the app
 export default app;
 
-// Add a module check to start the server only if this file is executed directly
 
-if (require.main === module) {
-  const PORT = process.env.PORT || 5000;
-  let server: any;
-  
-  sequelize.authenticate()
-    .then(() => {
-      console.log('Database connection established');
-      
-      server = app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-      });
-      
-      // Handle graceful shutdown
-      process.on('SIGTERM', () => {
-        console.log('SIGTERM received, shutting down gracefully');
-        server.close(() => {
-          console.log('Server closed');
-          sequelize.close().then(() => {
-            console.log('Database connection closed');
-            process.exit(0);
-          });
+const PORT = process.env.PORT || 5000;
+let server: any;
+
+sequelize.authenticate()
+  .then(() => {
+    console.log('Database connection established');
+    
+    server = app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+    
+    // Keep your graceful shutdown handling
+    process.on('SIGTERM', () => {
+      console.log('SIGTERM received, shutting down gracefully');
+      server.close(() => {
+        console.log('Server closed');
+        sequelize.close().then(() => {
+          console.log('Database connection closed');
+          process.exit(0);
         });
       });
-    })
-    .catch(err => {
-      console.error('Unable to connect to database:', err);
-      process.exit(1);
     });
-}
+  })
+  .catch(err => {
+    console.error('Unable to connect to database:', err);
+    process.exit(1);
+  });
